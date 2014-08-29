@@ -23,7 +23,7 @@ featuresList = ['BSAN','BSAS','BSAV','CTI','ELEV','EVI','LSTD','LSTN','REF1','RE
 data1 = np.copy(data)
 
 #Dependent/Target variables
-targets = ['Depth','Ca','P','pH','SOC','Sand']
+targets = ['Ca','P','pH','SOC','Sand']
 
 #Prepare empty result
 df = pd.DataFrame({"PIDN": ids, "Ca": test['PIDN'], "P": test['PIDN'], "pH": test['PIDN'], "SOC": test['PIDN'], "Sand": test['PIDN']})
