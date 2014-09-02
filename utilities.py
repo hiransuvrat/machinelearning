@@ -166,8 +166,8 @@ def prepDataTrain(data, label = 'Label', fields = [], split = True, splitPercent
     print 'Shuffled'
 
   if split:
-    test = data[(len(data) - int(len(data)/splitPercent)):]
-    data = data[:(len(data) - int(len(data)/splitPercent))]
+    test = data[(len(data) - int(len(data)*(splitPercent/100.0))):]
+    data = data[:(len(data) - int(len(data)*(splitPercent/100.0)))]
     print 'Split'
 
   fillVal = {}
