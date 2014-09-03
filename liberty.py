@@ -11,6 +11,7 @@ import sklearn.naive_bayes as bayes
 import sklearn.metrics as metrices
 import math
 
+#Calculates weighted gini score
 def weighted_gini(act,pred,weight):
     df = pd.DataFrame({"act":act,"pred":pred,"weight":weight}) 
     df = df.sort('pred',ascending=False) 
@@ -27,7 +28,7 @@ def weighted_gini(act,pred,weight):
 def normalized_weighted_gini(act,pred,weight):
     return weighted_gini(act,pred,weight) / weighted_gini(act,act,weight)
 
-
+#Test the data to predict for positive and negative sample
 def classification(data, featuresList):
     data['target'][:, (data['target'] > 0)] = 1
     data['target'][:, (data['target'] == 0)] = 0
@@ -48,17 +49,11 @@ def classification(data, featuresList):
 
 data = np.genfromtxt('../ImpVarSmoothTrain.csv', names=True, delimiter=',')
 X_test = np.genfromtxt('../ImpVarSmoothtest.csv', names=True, delimiter=',')
-#data['target'][data['target'] > 10] = np.log(data['target'][data['target'] > 10])
 data1 = np.copy(data)
-#featuresList= ['weatherVar185','weatherVar21','weatherVar189','weatherVar161','weatherVar103','weatherVar95','weatherVar194','weatherVar216','weatherVar186','weatherVar110','weatherVar137','weatherVar23','weatherVar49','weatherVar232','weatherVar68','weatherVar22','weatherVar151','weatherVar16','geodemVar14','geodemVar29','var8','var4','var10','var11','var12','var13','var15','var17']
-
-#classification(data, featuresList)
-#exit()
-
-#featuresList= ['weatherVar185','weatherVar21','weatherVar189','weatherVar161','weatherVar103','weatherVar95','weatherVar194','weatherVar216','weatherVar186','weatherVar110','weatherVar137','weatherVar23','weatherVar49','weatherVar232','weatherVar68','weatherVar22','weatherVar151','weatherVar16','geodemVar14','geodemVar29','var3','var8','var4','var10','var11','var12','var13','var15','var17']
 
 featuresList= ['weatherVar185','weatherVar21','weatherVar189','weatherVar161','weatherVar103','weatherVar95','weatherVar194','weatherVar216','weatherVar186','weatherVar110','weatherVar137','weatherVar23','weatherVar49','weatherVar232','weatherVar68','weatherVar22','weatherVar151','weatherVar16','geodemVar14','geodemVar29','var8','var4','var10','var11','var12','var13','var15','var17']
 
+#Cross validation testscores
 for i in ([0, 1]):
     data = np.copy(data1)
     data, testa, features, fillVal = util.prepDataTrain(data, 'target', featuresList, True, 50, False, True, 'median', False, 'set', i)
@@ -73,12 +68,18 @@ for i in ([0, 1]):
 
 
     pred = np.power(clf.predict(testa[features].tolist()), math.e)
-    #pred = clf.predict(testa[features].tolist())
     print normalized_weighted_gini(testa['target'],pred,testa['var11'])
     #for i in range(len(clf.feature_importances_)):
     #    print i, clf.feature_importances_[i], features[i]
-exit()
 
+
+#Carry out building data on full model
+data = np.copy(data1)
+data, testa, features, fillVal = util.prepDataTrain(data, 'target', featuresList, False, 50, False, True, 'median', False, 'set', i)
+data['target'] = np.log(math.e + data['target'])
+
+#Final predictions
+clf.fit(data[features].tolist(), data['target'])
 test = util.prepDataTest(X_test, features, True, fillVal, False, 'set')
 pred = np.power(clf.predict(test[features].tolist()), math.e) #clf.predict(test[features].tolist())
 df = pd.DataFrame({"id": X_test['id'], "target": pred})
