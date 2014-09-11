@@ -1,6 +1,7 @@
 import scipy.stats as stats
 from sklearn.decomposition import PCA
 import numpy as np
+import matplotlib.pyplot as plt
 
 #Calculate and print correlation values
 def calcCorr(data, fields= []):
@@ -49,5 +50,14 @@ def fillnaDict(data, fields):
         data[field][indices] = fields[field]
 
     return data
+
+#Plot graphs
+def plotData(x, y, alpha=0.4, s=20):
+    gt = plt.plot([i for i in range(len(y))], y, alpha=alpha, label='ground truth')
+    plt.scatter([i for i in range(len(y))], x, s=s, alpha=alpha)
+    plt.xlim((0, 10))
+    plt.ylabel('y')
+    plt.xlabel('x')
+    plt.show()
 
 
