@@ -2,6 +2,8 @@ import scipy.stats as stats
 from sklearn.decomposition import PCA
 import numpy as np
 import matplotlib.pyplot as plt
+import math 
+import scipy as sp
 
 #Calculate and print correlation values
 def calcCorr(data, fields= []):
@@ -55,9 +57,57 @@ def fillnaDict(data, fields):
 def plotData(x, y, alpha=0.4, s=20):
     gt = plt.plot([i for i in range(len(y))], y, alpha=alpha, label='ground truth')
     plt.scatter([i for i in range(len(y))], x, s=s, alpha=alpha)
-    plt.xlim((0, 10))
+    plt.xlim((0, len(y)))
     plt.ylabel('y')
     plt.xlabel('x')
     plt.show()
 
+#Evaluate the regression
+def computeCost(x, y, w, constant=0, costType = 'log'):
+    #Number of samples
+    samples = y.size
+    if costType == 'log':
+        predReg = x.dot(w).flatten()
+        predVal = []
+        for itrPred in predReg:
+            #Calculate predicted values
+            predVal.extend([(1.0/(1+math.pow(math.e, (-1*(constant+itrPred)))))])
+        #Calculate log loss
+        error = logLoss(y, predVal)
+        return error
 
+#Calculate log loss
+def logLoss(act, pred):
+    epsilon = 1e-15
+    pred = sp.maximum(epsilon, pred)
+    pred = sp.minimum(1-epsilon, pred)
+    ll = sum(act*sp.log(pred) + sp.subtract(1,act)*sp.log(sp.subtract(1,pred)))
+    ll = ll * -1.0/len(act)
+    return ll
+
+#Compute losses across grid of weights
+def genGridLoss(x, y, w1Range=[0,1]):
+    #Grid over which we will calculate J
+    theta0_vals = np.linspace(w1Range[0], w1Range[1], 10)
+
+    #initialize J_vals to a matrix of 0's
+    JVals = np.zeros(shape=(theta0_vals.size))
+ 
+    #Fill out JVals
+    for t1, element1 in enumerate(theta0_vals):
+        thetaT = np.zeros(shape=(1, 1))
+        thetaT[0][0] = element1
+        JVals[t1] = computeCost(x, y, [element1])
+
+    return JVals, theta0_vals
+
+def genCountourPlot(x, y):
+    JVals, w = genGridLoss(x, y)
+    #Plot J_vals as 15 contours spaced logarithmically between 0.01 and 100
+    #contour(w, JVals, logspace(-2, 3, 20))
+    plt.xlabel('theta_0')
+    plt.ylabel('theta_1')
+    plt.plot(w, JVals)
+    show()
+
+#genCountourPlot(np.array([[1],[1]]),np.array([0, 0]))
