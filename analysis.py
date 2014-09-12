@@ -86,9 +86,9 @@ def logLoss(act, pred):
     return ll
 
 #Compute losses across grid of weights
-def genGridLoss(x, y, w1Range=[0,1]):
+def genGridLoss(x, y, w1Range=[0,1], breaks = 100):
     #Grid over which we will calculate J
-    theta0_vals = np.linspace(w1Range[0], w1Range[1], 10)
+    theta0_vals = np.linspace(w1Range[0], w1Range[1], breaks)
 
     #initialize J_vals to a matrix of 0's
     JVals = np.zeros(shape=(theta0_vals.size))
@@ -101,13 +101,13 @@ def genGridLoss(x, y, w1Range=[0,1]):
 
     return JVals, theta0_vals
 
-def genCountourPlot(x, y):
-    JVals, w = genGridLoss(x, y)
+def genCountourPlot(x, y, weightRange = [0, 1], breaks = 10):
+    JVals, w = genGridLoss(x, y, weightRange, breaks)
     #Plot J_vals as 15 contours spaced logarithmically between 0.01 and 100
     #contour(w, JVals, logspace(-2, 3, 20))
-    plt.xlabel('theta_0')
-    plt.ylabel('theta_1')
+    plt.xlabel('weight')
+    plt.ylabel('loss')
     plt.plot(w, JVals)
-    show()
+    plt.show()
 
-#genCountourPlot(np.array([[1],[1]]),np.array([0, 0]))
+#genCountourPlot(np.array([[1],[1], [1]]),np.array([0, 1, 0]), [-1,0], 1000)
