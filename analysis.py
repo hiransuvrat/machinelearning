@@ -97,7 +97,7 @@ def genGridLoss(x, y, w1Range=[0,1], breaks = 100):
     for t1, element1 in enumerate(theta0_vals):
         thetaT = np.zeros(shape=(1, 1))
         thetaT[0][0] = element1
-        JVals[t1] = computeCost(x, y, [element1])
+        JVals[t1] = computeCost(x, y, [0, element1])
 
     return JVals, theta0_vals
 
