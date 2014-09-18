@@ -214,11 +214,12 @@ def prepDataTest(data, fields, fillna = True, fillVal = {}, dump = False, dumpPr
   return data
 
 #Make a post http call to give host and port
-def makeHttpCall(data, hostname='127.0.0.1', port=9200, requestType='POST'):
+#Mainly to be used to push data into ElasticSearch
+def makeHttpCall(data, url='/africa/data', hostname='127.0.0.1', port=9200, requestType='POST'):
   import httplib, urllib, json
   #params = urllib.urlencode(data)
   conn = httplib.HTTPConnection(hostname, port)
-  conn.request(requestType, "/africa/test", data)
+  conn.request(requestType, url, data)
   response = conn.getresponse()
   data = response.read()
   conn.close()
