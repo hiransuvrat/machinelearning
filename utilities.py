@@ -213,6 +213,18 @@ def prepDataTest(data, fields, fillna = True, fillVal = {}, dump = False, dumpPr
 
   return data
 
+#Make a post http call to give host and port
+def makeHttpCall(data, hostname='127.0.0.1', port=9200, requestType='POST'):
+  import httplib, urllib, json
+  #params = urllib.urlencode(data)
+  conn = httplib.HTTPConnection(hostname, port)
+  conn.request(requestType, "/africa/test", data)
+  response = conn.getresponse()
+  data = response.read()
+  conn.close()
+  return response.status, response.reason
+
+
 #def fillColumnId(
 #csvToVw("test.csv", "test.vw", ['I1','I2','I3','I4','I5','I6','I7','I8','I9','I10','I11','I12','I13'],['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','C26'],{'I1':'i','I2':'i','I3':'i','I4':'i','I5':'i','I6':'i','I7':'i','I8':'i','I9':'i','I10':'i','I11':'i','I12':'i','I13':'i','C1':'c','C2':'c','C3':'c','C4':'c','C5':'c','C6':'c','C7':'c','C8':'c','C9':'c','C10':'c','C11':'c','C12':'c'}, "Label", "Id", True)
 
